@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Crossfilter</title>
+<link rel="stylesheet" href="static/stylesheets/style.css" />
+
+<body>
+
+<div id="body">
+	<p>Crossfilter test using example: How is 311 used in New York City?</p>
+<p>How does time-of-day correlate with <a href="javascript:filter([null, [0, 5], null])">weekdays</a>? 
+	
+How do call patterns differ between 
+<a href="javascript:filter([null,[5,6], null])">weekends</a> and 
+<a href="javascript:filter([null,[0,4], null])">weekdays</a>, or 
+<a href="javascript:filter([[4, 7], null, null])">mornings</a> and 
+<a href="javascript:filter([[21, 24], null, null])">nights</a>? 
+
+<div id="charts">
+  <div id="hour-chart" class="chart">
+    <div class="title">Time of Day</div>
+  </div>
+  <div id="weekday-chart" class="chart">
+    <div class="title">Weekday</div>
+  </div>
+  <div id="temperature-chart" class="chart">
+    <div class="title">Temperature</div>
+  </div>
+  <div id="date-chart" class="chart">
+    <div class="title">Date</div>
+  </div>
+</div>
+
+<aside id="totals"><span id="active">-</span> of <span id="total">-</span> complaints selected.</aside>
+
+<div id="lists">
+  <div id="flight-list" class="list"></div>
+</div>
+
+<footer>
+  <span style="float:right;">
+    Released under the <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache License 2.0</a>.
+  </span>
+  Copyright 2012 <a href="http://squareup.com">Square, Inc.</a>
+</footer>
+
+</div>
+<script src="static/javascripts/crossfilter.v1.min.js"></script>
+<script src="static/javascripts/d3.v3.min.js"></script>
+<script src="index.js"></script>
+
+</body>
