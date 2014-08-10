@@ -16,63 +16,79 @@ boroughs = {}
 dates = {}
 hours = {}
 zipcodes = {}
+
+tempDict = {}
+
 with open('/Users/Jia/Documents/map_311/data_processed/nyc_2013.csv', 'wb') as newcsvfile:
     spamwriter = csv.writer(newcsvfile)
-    spamwriter.writerow(["agency", "description", "date","weekday", "hour", "zipcode", "lat", "lng", "borough"])
+    spamwriter.writerow(["agency","agencyDetail", "description", "date","weekday", "hour", "zipcode", "lat", "lng", "borough","tempMax", "tempMin"])
 
     with open('/Users/Jia/Documents/map_311/data_raw/nyc_311_Service_Requests_from_2010_to_Present.csv', 'rb') as csvfile:
         spamreader = csv.reader(csvfile)
-        csvfile.seek(0)
-        next(spamreader, None)   
-        for row in spamreader:
+        
+        with open('/Users/Jia/Documents/map_311/data_raw/nyc_weather_371757.csv', 'rb') as csvfile2:
+            temperatureFile = csv.reader(csvfile2)
+            csvfile.seek(0)
+            next(temperatureFile, None)
             
-            datearray = row[1].split(" ")
-            ampm = datearray[2]
-            hour = int(datearray[1].split(":")[0])
-        
-            if int(hour) == 12:
-                hour = int(hour)-12
-            if ampm == "PM":
-                hour = int(hour)+12
-        
-            date = datearray[0]
-            month, day, year = (int(x) for x in date.split('/'))
-            date = date.split('/')
-            date="".join(date)
-            weekday = datetime.date(year, month, day).weekday()
+            for temperature in temperatureFile:
+                tempDate = temperature[2]
+                tempMax = round(float(temperature[12])*.1*9/5+32, 2)
+                tempMin = round(float(temperature[13])*.1*9/5+32, 2)
+                
+                tempYear = tempDate[0:4]
+                tempMonth = tempDate[4:6]
+                tempDay = tempDate[6:8]
+                
+                tempNewDate = tempMonth+tempDay+tempYear
+                
+                tempDict[tempNewDate] = [tempMax, tempMin]
+                
+          #  print tempDict 
+            csvfile.seek(10000000)
+            next(spamreader, None)
             
-            agency = row[3]
-            #if "School" in agency:
-            #    agency = "school"
+            for row in spamreader:
+                datearray = row[1].split(" ")
+                date = datearray[0]
+                month, day, year = (int(x) for x in date.split('/'))
+                if int(year)==2013:
+                    ampm = datearray[2]
+                    hour = int(datearray[1].split(":")[0])
         
-            complaint = row[5]
-            description = row[6]
-            description = description.strip(',')
-            id = row[0]
-           # created_at =row[1] 
-            zipcode = row[8][0:6]
-            lng = row[-2]
-            lat = row[-3]
-            borough = row[23]
+                    if int(hour) == 12:
+                        hour = int(hour)-12
+                    if ampm == "PM":
+                        hour = int(hour)+12
         
-          #  zipcodes[zipcode] = zipcodes.get(zipcode,0)+1
-          #  agencies[agency] = agencies.get(agency,0)+1
-          #  descriptions[description] = descriptions.get(description,0)+1
-          #  complaints[complaint] = complaints.get(complaint, 0)+1
-          #
-          # # if datearray[1] != "12:00:00":
-          #  hours[hour] = hours.get(hour,0)+1
-          #
-          #  boroughs[borough] = boroughs.get(borough, 0)+1 
-          #  dates[date] = dates.get(date, 0)+1
-            if agency != "" and date !="" and zipcode !="" and lat !="" and lng!="" and borough!="" and int(year) == 2013 and  datearray[1] != "12:00:00" and  datearray[1] != "00:00:00":
-               # print [agency, complaint, date, weekday, hour, zipcode, lat, lng, borough]
-               # hours[hour] = hours.get(hour,0)+1
-               # if int(hour) > 2 and int(hour) < 10:
-               #     print hour
-                spamwriter.writerow([agency, description, date, weekday, hour, zipcode, lat, lng, borough])
+
+                    date = date.split('/')
+                    date="".join(date)
+                    weekday = datetime.date(year, month, day).weekday()
+            
+                    agency = row[3]
+                    agencyDetail = row[4]
+                    #if "School" in agency:
+                    #    agency = "school"
         
-           #print name,",",type,",",id,",",created_at,",",zipcode,",",lng,",",lat
+                    complaint = row[5]
+                    description = row[6]
+                    description = description.strip(',')
+                    id = row[0]
+                   # created_at =row[1] 
+                    zipcode = row[8][0:6]
+                    lng = row[-2]
+                    lat = row[-3]
+                    borough = row[23]
+                
+                    if date in tempDict.keys():
+                        temperatureMax = tempDict[date][0]
+                        temperatureMin = tempDict[date][1]
+                        if agency != "" and date !="" and zipcode !="" and lat !="" and lng!="" and borough!="" and  datearray[1] != "12:00:00" and  datearray[1] != "00:00:00":
+                        #if agency != "" and date !="" and zipcode !="" and lat !="" and lng!="" and borough!="" and datearray[1] != "12:00:00" and  datearray[1] != "00:00:00":
+                            #print [agency, description, date, weekday, hour, zipcode, lat, lng, borough, temperatureMax, temperatureMin]
+                            spamwriter.writerow([agency,agencyDetail, description, date, weekday, hour, zipcode, lat, lng, borough, temperatureMax, temperatureMin])
+               #print name,",",type,",",id,",",created_at,",",zipcode,",",lng,",",lat
 
     #print zipcodes
     #print agencies

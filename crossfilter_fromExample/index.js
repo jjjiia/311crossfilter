@@ -29,8 +29,8 @@ d3.csv("data_processed/nyc_2013_data_temp.json", function(error, flights) {
       all = flight.groupAll(),
       date = flight.dimension(function(d) { return d.date; }),
       dates = date.group(d3.time.day),
-      weekday = flight.dimension(function(d) { return d.weekday }),
-      weekdays = weekday.group(Math.floor),
+      weekday = flight.dimension(function(d) { return d.date }),
+      weekdays = weekday.group(d3.time.format("%A")),
       hour = flight.dimension(function(d) { return d.hour }),
       hours = hour.group(Math.floor),
 	  agency = flight.dimension(function(d){return d.agency}),
@@ -40,8 +40,8 @@ d3.csv("data_processed/nyc_2013_data_temp.json", function(error, flights) {
 	  tmax = flight.dimension(function(d){return d.tmax}),
 	  tmaxs = tmax.group();
 	  
-	  
-  var charts = [
+	  var days=['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+	var charts = [
 
     barChart()
         .dimension(hour)
@@ -53,16 +53,24 @@ d3.csv("data_processed/nyc_2013_data_temp.json", function(error, flights) {
     barChart()
         .dimension(weekday)
         .group(weekdays)
-      	.x(d3.scale.linear()
-        .domain([0, 6])
-        .rangeRound([0, 10 * 24])),
+      	.x(d3.scale.ordinal()
+        .domain(days)
+        .rangePoints([0, 20 * 7])),
+        //.filter([new Date(2013, 0, 1), new Date(2014, 0, 1)]),
 		
     barChart()
         .dimension(tmax)
         .group(tmaxs)
       	.x(d3.scale.linear()
-        .domain([0, 40])
-        .rangeRound([0, 10 * 50])),
+        .domain([-10,40])
+        .range([1,10*24])),
+		
+//    barChart()
+//        .dimension(agency)
+//        .group(agencies)
+//      	.x(d3.scale.ordinal()
+//        .domain([,])
+//        .rangeRound([0, 10 * 50])),
 		
     barChart()
         .dimension(date)
@@ -110,7 +118,6 @@ d3.csv("data_processed/nyc_2013_data_temp.json", function(error, flights) {
 
   // Like d3.time.format, but faster.
   function parseDate(d) {
-	  console.log(d)
     return new Date(d.substring(4, 8),
         d.substring(0, 2) - 1,
         d.substring(2, 4));
@@ -127,7 +134,7 @@ d3.csv("data_processed/nyc_2013_data_temp.json", function(error, flights) {
   };
 
   function flightList(div) {
-    var flightsByDate = nestByDate.entries(date.top(40));
+    var flightsByDate = nestByDate.entries(date.top(10));
 
     div.each(function() {
       var date = d3.select(this).selectAll(".date")
