@@ -19,7 +19,7 @@ zipcodes = {}
 
 tempDict = {}
 
-with open('/Users/Jia/Documents/map_311/data_processed/nyc_2013.csv', 'wb') as newcsvfile:
+with open('/Users/Jia/Documents/map_311/data_processed/nyc_all.csv', 'wb') as newcsvfile:
     spamwriter = csv.writer(newcsvfile)
     spamwriter.writerow(["agency","agencyDetail", "description", "date","weekday", "hour", "zipcode", "lat", "lng", "borough","tempMax", "tempMin"])
 
@@ -52,7 +52,7 @@ with open('/Users/Jia/Documents/map_311/data_processed/nyc_2013.csv', 'wb') as n
                 datearray = row[1].split(" ")
                 date = datearray[0]
                 month, day, year = (int(x) for x in date.split('/'))
-                if int(year)==2013:
+                if int(year)!="":
                     ampm = datearray[2]
                     hour = int(datearray[1].split(":")[0])
         
