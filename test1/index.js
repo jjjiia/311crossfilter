@@ -5,12 +5,15 @@
 
 //var gainOrLossChart = dc.pieChart("#gain-loss-chart");
 //var fluctuationChart = dc.barChart("#fluctuation-chart");
+var complaintChart = dc.rowChart("#complaint-chart");
+
 var boroughChart = dc.pieChart("#borough-chart");
 var dayOfWeekChart = dc.rowChart("#day-of-week-chart");
 var agencyChart = dc.rowChart("#agency-chart");
 var hourChart = dc.barChart("#hour-chart");
-var tempChart = dc.rowChart("#temperature-chart")
+var tempChart = dc.barChart("#temperature-chart")
 var nycMap = dc.geoChoroplethChart("#nyc-chart");
+var zipcodeChart = dc.rowChart("#zipcode-chart");
 //var moveChart = dc.lineChart("#monthly-move-chart");
 //var volumeChart = dc.barChart("#monthly-volume-chart");
 //var yearlyBubbleChart = dc.bubbleChart("#yearly-bubble-chart");
@@ -20,8 +23,11 @@ function toTitleCase(str)
 {
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
+
+
 queue()
-.defer(d3.csv, "nyc_2013.csv")
+.defer(d3.csv, "nyc_2013_ALL.csv")
+//.defer(d3.csv, "nyc_smallSample.csv")
 .defer(d3.json, "nyc-zip-codes.geojson")
 .await(ready);
 
@@ -65,7 +71,6 @@ function ready(error, data, geodata){
     });
     var complaintGroup = complaint.group();
   
-  
     var hour = ndx.dimension(function (d) {
         return d.hour;
     });
@@ -76,7 +81,7 @@ function ready(error, data, geodata){
         return d.borough;
     });
     var boroughGroup = borough.group();
-
+	
 
     // counts per weekday
     var dayOfWeek = ndx.dimension(function (d) {
@@ -87,10 +92,68 @@ function ready(error, data, geodata){
     var dayOfWeekGroup = dayOfWeek.group();
 
 
-    boroughChart.width(250)
-        .height(250)
-        .radius(120)
-		.ordinalColors(["#619633","#81DC3C","#B0DC92","#5E8D5D","#64DA78",])
+	var zipcode = ndx.dimension(function(d){
+		return d.zipcode
+	})
+	var zipcodeGroup = zipcode.group();
+
+	var topRowHeight = 120;
+	var topRowColor = "#EDA929"
+    dayOfWeekChart.width(180)
+        .height(topRowHeight)
+        .margins({top: 0, left: 30, right: 10, bottom: 20})
+        .group(dayOfWeekGroup)
+        .dimension(dayOfWeek)
+        // assign colors to each value in the x scale domain
+        .ordinalColors([topRowColor])
+        .label(function (d) {
+            return d.key.split(".")[1];
+        })
+		.labelOffsetX(-30)
+		//.labelOffsetY(0)
+		
+        // title sets the row text
+        .title(function (d) {
+            return d.value;
+        })
+        .elasticX(true)
+        .gap(2)
+        .xAxis().ticks(4);
+		
+	hourChart.width(300)
+	        .height(topRowHeight)
+	        .margins({top: 0, right: 50, bottom: 20, left: 50})
+	        .ordinalColors([topRowColor])
+	        .dimension(hour)
+	        .group(hourGroup)
+	        .centerBar(true)
+	        .gap(1)
+	        .x(d3.scale.linear().domain([1,24]))
+	        .yAxis().ticks(4);
+			
+    tempChart.width(300)
+        .height(topRowHeight)
+        .margins({top: 20, left: 50, right: 10, bottom: 20})
+        .group(tempGroup)
+        .dimension(temp)
+        .ordinalColors([topRowColor])
+        .centerBar(true)
+        .gap(1)
+        .x(d3.scale.linear().domain([1,124]))
+        .yAxis().ticks(4)
+	
+		var boroughScale = d3.scale.linear().domain([0,7]).range(["#ffffff", "#dc3a23"])
+		var boroughChartColors = []
+		for(var i =2; i < 7; i ++){
+			boroughChartColors.push(boroughScale(i))
+		}
+		
+    boroughChart.width(300)
+        .height(160)
+        .radius(70)
+		//.filter("BROOKLYN")
+		//.ordinalColors(["#E69326","#EBB743","#E4782E","#E39E58","#B78433"])
+		.ordinalColors(boroughChartColors)
 		.minAngleForLabel([.2])
         .dimension(borough)
 		.ordering(function(d){ return d.value})
@@ -99,48 +162,37 @@ function ready(error, data, geodata){
 			//return toTitleCase(d.key) + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
             return toTitleCase(d.key);
         })
-		//.legend(dc.legend().x(40).y(0).gap(5));
-
-    dayOfWeekChart.width(200)
-        .height(200)
-        .margins({top: 20, left: 10, right: 10, bottom: 20})
-        .group(dayOfWeekGroup)
-        .dimension(dayOfWeek)
-        // assign colors to each value in the x scale domain
-        .ordinalColors(['#aaa'])
-        .label(function (d) {
-            return d.key.split(".")[1];
-        })
-        // title sets the row text
-        .title(function (d) {
-            return d.value;
-        })
-        .elasticX(true)
-        .xAxis().ticks(4);
 		
-    tempChart.width(200)
-        .height(1200)
-        .margins({top: 20, left: 10, right: 10, bottom: 20})
-        .group(tempGroup)
-        .dimension(temp)
-		.ordering(function(d){ return -d.key})
-        .ordinalColors(['#aaa'])
-        .label(function (d) {
-            return d.key;
-        })
-        .title(function (d) {
-            return d.value;
-        })
-        .elasticX(true)
-        .xAxis().ticks(4);
-		
-	agencyChart.width(500)
-        .height(400)
-        .margins({top: 20, left: 10, right: 10, bottom: 20})
+	zipcodeChart.width(200)
+	    .height(200)
+	    .margins({top: 20, left: 50, right: 10, bottom: 20})
+	    .group(zipcodeGroup)
+	    .dimension(zipcode)
+		.gap(1)
+		.data(function(zipcodeGroup){return zipcodeGroup.top(10)})
+		.ordering(function(d){ return -d.value })
+	    .ordinalColors(["#dc3a23"])
+	    .label(function (d) {
+	        return d.key;
+	    })
+		.labelOffsetX(-40)
+	    // title sets the row text
+	    .title(function (d) {
+	        return d.value;
+	    })
+	    .elasticX(true)
+	    .xAxis().ticks(4);
+			
+			
+		var bottomRowHeight = 200
+	agencyChart.width(300)
+        .height(bottomRowHeight)
+        .margins({top: 0, left: 5, right: 10, bottom: 0})
         .group(agencyGroup)
         .dimension(agency)
+		.data(function(agencyGroup){return agencyGroup.top(10)})
 		.ordering(function(d){ return -d.value })
-        .ordinalColors(["#ccc"])
+        .ordinalColors(["#55649B"])
         .label(function (d) {
             return d.key+": "+ d.value + " incidents";
         })
@@ -151,16 +203,21 @@ function ready(error, data, geodata){
         .elasticX(true)
         .xAxis().ticks(4);
 		
-	hourChart.width(500)
-	        .height(200)
-	        .margins({top: 0, right: 50, bottom: 20, left: 40})
-	        .ordinalColors(["#ccc"])
-	        .dimension(hour)
-	        .group(hourGroup)
-	        .centerBar(true)
-	        .gap(1)
-	        .x(d3.scale.linear().domain([1,24]))
-			
+	complaintChart.width(300)
+        .height(bottomRowHeight)
+        .margins({top: 0, left: 5, right: 10, bottom: 0})
+        .group(complaintGroup)
+        .dimension(complaint)
+		.data(function(complaintGroup){return complaintGroup.top(10)})
+		.ordering(function(d){ return -d.value })
+        .ordinalColors(["#55649B"])
+        .label(function (d){
+            return d.key+": "+ d.value + " incidents";
+        })
+        .elasticX(true)
+        .xAxis().ticks(4);
+		
+	
 			
     dc.dataCount(".dc-data-count")
         .dimension(ndx)
@@ -170,14 +227,8 @@ function ready(error, data, geodata){
         // %filter-count and %total-count are replaced with the values obtained.
         .html({
             some:"<strong>%filter-count</strong> selected out of <strong>%total-count</strong> records | <a href='javascript:dc.filterAll(); dc.renderAll();''>Reset All</a>",
-            all:"All records selected. Please click on the graph to apply filters."
-        });
-
-
-		var projection = d3.geo.mercator()
-						.center([-74.25,40.9])
-						.translate([0, 0])
-						.scale(55000);
+            all:"All  <strong>%total-count</strong> records selected. Please click on the graph to apply filters."
+        })
     /*
     //#### Data Table
     // Create a data table widget and use the given css selector as anchor. You can also specify
@@ -197,7 +248,8 @@ function ready(error, data, geodata){
         <!-- data rows will filled in here -->
     </div>
     */
-    dc.dataTable(".dc-data-table")
+ 
+ /*   dc.dataTable(".dc-data-table")
         .dimension(dateDimension)
         // data table does not use crossfilter group but rather a closure
         // as a grouping function
@@ -235,31 +287,29 @@ function ready(error, data, geodata){
             table.selectAll(".dc-table-group").classed("info", true);
         });
 
-
+*/
 	//nycMap
-	var zipcode = ndx.dimension(function(d){
-		return d.zipcode
-	})
-	var zipcodeGroup = zipcode.group();
-	
-	var colorScale = d3.scale.linear().domain([0,10000]).range(["#eee", "#f00"])
-	
+	//var colorScale = d3.scale.linear().domain([0,10000]).range(["#eee", "#dc3a23"])
+
+	var projection = d3.geo.mercator()
+					.center([-74.25,40.915])
+					.translate([0, 0])
+					.scale(45000);
     nycMap
 		.projection(projection)
-        .width(500) // (optional) define chart width, :default = 200
-        .height(500) // (optional) define chart height, :default = 200
+        .width(480) // (optional) define chart width, :default = 200
+        .height(430) // (optional) define chart height, :default = 200
         .transitionDuration(1000) // (optional) define chart transition duration, :default = 1000
         .dimension(zipcode) // set crossfilter dimension, dimension key should match the name retrieved in geo json layer
         .group(zipcodeGroup) // set crossfilter group
         //.colors(function(d, i){return  colorScale(d.value);})
-		.colors(colorbrewer.YlOrRd[9])
-		.colorDomain([0, 1000])
+		.colors(d3.scale.linear().domain([0,11000]).range(["#ffffff", "#dc3a23"]))
+		//.colors(d3.scale.linear().domain([0,100]).range(["#fff", "#dc3a23"]))
 		.overlayGeoJson(geodata.features, "zipcode", function(d) {
             return d.properties.postalCode;
         })
-        .title(function(d) {
-            return "State: " + d.key + "\nTotal Amount Raised: " + numberFormat(d.value ? d.value : 0) + "M";
-        });
+		.legend(dc.legend().x(170).y(0).gap(5));
+
     dc.renderAll();
 
 };

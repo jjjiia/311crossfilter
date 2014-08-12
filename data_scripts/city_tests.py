@@ -19,9 +19,9 @@ zipcodes = {}
 
 tempDict = {}
 
-with open('/Users/Jia/Documents/map_311/data_processed/nyc_all.csv', 'wb') as newcsvfile:
+with open('/Users/Jia/Documents/map_311/data_processed/nyc_2013_S.csv', 'wb') as newcsvfile:
     spamwriter = csv.writer(newcsvfile)
-    spamwriter.writerow(["agency","agencyDetail", "description", "date","weekday", "hour", "zipcode", "lat", "lng", "borough","tempMax", "tempMin"])
+    spamwriter.writerow(["agency", "description", "date","weekday", "hour", "zipcode","borough","tempMax"])
 
     with open('/Users/Jia/Documents/map_311/data_raw/nyc_311_Service_Requests_from_2010_to_Present.csv', 'rb') as csvfile:
         spamreader = csv.reader(csvfile)
@@ -52,7 +52,7 @@ with open('/Users/Jia/Documents/map_311/data_processed/nyc_all.csv', 'wb') as ne
                 datearray = row[1].split(" ")
                 date = datearray[0]
                 month, day, year = (int(x) for x in date.split('/'))
-                if int(year)!="":
+                if int(year)==2013:
                     ampm = datearray[2]
                     hour = int(datearray[1].split(":")[0])
         
@@ -87,7 +87,7 @@ with open('/Users/Jia/Documents/map_311/data_processed/nyc_all.csv', 'wb') as ne
                         if agency != "" and date !="" and zipcode !="" and lat !="" and lng!="" and borough!="" and  datearray[1] != "12:00:00" and  datearray[1] != "00:00:00":
                         #if agency != "" and date !="" and zipcode !="" and lat !="" and lng!="" and borough!="" and datearray[1] != "12:00:00" and  datearray[1] != "00:00:00":
                             #print [agency, description, date, weekday, hour, zipcode, lat, lng, borough, temperatureMax, temperatureMin]
-                            spamwriter.writerow([agency,agencyDetail, description, date, weekday, hour, zipcode, lat, lng, borough, temperatureMax, temperatureMin])
+                            spamwriter.writerow([agency,description, date, weekday, hour, zipcode, borough, temperatureMax])
                #print name,",",type,",",id,",",created_at,",",zipcode,",",lng,",",lat
 
     #print zipcodes
