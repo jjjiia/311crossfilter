@@ -23,7 +23,7 @@ div.dc-chart {
 
 .dc-chart rect.deselected {
     stroke: none;
-    fill: #ccc;
+    fill: #aaa;
 }
 
 .dc-chart .empty-chart .pie-slice path {
@@ -55,19 +55,19 @@ div.dc-chart {
 
 .dc-chart .selected path {
     stroke-width: 1;
-    stroke: #ccc;
+    stroke: #aaa;
     fill-opacity: 1;
 }
 
 .dc-chart .deselected path {
     stroke: none;
     fill-opacity: .5;
-    fill: #ccc;
+    fill: #aaa;
 }
 
 .dc-chart .axis path, .axis line {
     fill: none;
-    stroke: #000;
+    stroke: #aaa;
     shape-rendering: crispEdges;
 }
 
@@ -77,14 +77,14 @@ div.dc-chart {
 
 .dc-chart .grid-line {
     fill: none;
-    stroke: #ccc;
+    stroke: #aaa;
     opacity: .5;
     shape-rendering: crispEdges;
 }
 
 .dc-chart .grid-line line {
     fill: none;
-    stroke: #ccc;
+    stroke: #aaa;
     opacity: .5;
     shape-rendering: crispEdges;
 }
@@ -100,7 +100,7 @@ div.dc-chart {
 
 .dc-chart .brush .resize path {
     fill: #eee;
-    stroke: #666;
+    stroke: #aaa;
 }
 
 .dc-chart path.line {
@@ -134,14 +134,14 @@ div.dc-chart {
 
 .dc-chart .selected circle {
     stroke-width: 3;
-    stroke: #ccc;
+    stroke: #aaa;
     fill-opacity: 1;
 }
 
 .dc-chart .deselected circle {
     stroke: none;
     fill-opacity: .5;
-    fill: #ccc;
+    fill: #aaa;
 }
 
 .dc-chart .bubble {
@@ -156,11 +156,11 @@ div.dc-chart {
 }
 
 .dc-data-count .filter-count {
-    color: red;
+    color: #aaa;
 }
 
 .dc-data-count .total-count {
-    color: red;	
+    color: #aaa;	
 }
 
 .dc-data-table {
@@ -273,12 +273,12 @@ div.dc-chart {
 .dc-chart .box line,
 .dc-chart .box circle {
     fill: #fff;
-    stroke: #000;
+    stroke: #aaa;
     stroke-width: 1.5px;
 }
 
 .dc-chart .box rect {
-    stroke: #000;
+    stroke: #aaa;
     stroke-width: 1.5px;
 }
 
@@ -288,11 +288,11 @@ div.dc-chart {
 
 .dc-chart .box .outlier {
     fill: none;
-    stroke: #ccc;
+    stroke: #aaa;
 }
 
 .dc-chart .box.deselected .box {
-    fill: #ccc;
+    fill: #aaa;
 }
 
 .dc-chart .box.deselected {
@@ -306,7 +306,7 @@ div.dc-chart {
 .dc-chart .heatmap .box-group.deselected rect {
     stroke: none;
     fill-opacity: .5;
-    fill: #ccc;
+    fill: #aaa;
 }
 
 .dc-chart .heatmap g.axis text {

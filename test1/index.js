@@ -26,8 +26,8 @@ function toTitleCase(str)
 
 
 queue()
-.defer(d3.csv, "nyc_2013_ALL.csv")
-//.defer(d3.csv, "nyc_smallSample.csv")
+//.defer(d3.csv, "nyc_2013_ALL.csv")
+.defer(d3.csv, "nyc_smallSample.csv")
 .defer(d3.json, "nyc-zip-codes.geojson")
 .await(ready);
 
@@ -99,7 +99,7 @@ function ready(error, data, geodata){
 
 	var topRowHeight = 120;
 	var topRowColor = "#EDA929"
-    dayOfWeekChart.width(180)
+    dayOfWeekChart.width(200)
         .height(topRowHeight)
         .margins({top: 0, left: 30, right: 10, bottom: 20})
         .group(dayOfWeekGroup)
@@ -127,6 +127,8 @@ function ready(error, data, geodata){
 	        .dimension(hour)
 	        .group(hourGroup)
 	        .centerBar(true)
+	        .elasticY(true)
+			
 	        .gap(1)
 	        .x(d3.scale.linear().domain([1,24]))
 	        .yAxis().ticks(4);
@@ -141,12 +143,16 @@ function ready(error, data, geodata){
         .gap(1)
         .x(d3.scale.linear().domain([1,124]))
         .yAxis().ticks(4)
-	
+		
 		var boroughScale = d3.scale.linear().domain([0,7]).range(["#ffffff", "#dc3a23"])
 		var boroughChartColors = []
 		for(var i =2; i < 7; i ++){
 			boroughChartColors.push(boroughScale(i))
 		}
+		
+		//TODO:lenght of current data
+		var allValue = data.length
+		//console.log(allvalue)
 		
     boroughChart.width(300)
         .height(160)
@@ -160,7 +166,7 @@ function ready(error, data, geodata){
         .group(boroughGroup)
         .label(function (d) {
 			//return toTitleCase(d.key) + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
-            return toTitleCase(d.key);
+            return toTitleCase(d.key+ " "+Math.round(d.value/allValue*100)+"%");
         })
 		
 	zipcodeChart.width(200)
@@ -176,6 +182,8 @@ function ready(error, data, geodata){
 	        return d.key;
 	    })
 		.labelOffsetX(-40)
+		.labelOffsetY(12)
+		
 	    // title sets the row text
 	    .title(function (d) {
 	        return d.value;
@@ -185,16 +193,18 @@ function ready(error, data, geodata){
 			
 			
 		var bottomRowHeight = 200
-	agencyChart.width(300)
+	agencyChart.width(600)
         .height(bottomRowHeight)
-        .margins({top: 0, left: 5, right: 10, bottom: 0})
+        .margins({top: 0, left: 0, right: 10, bottom: 0})
         .group(agencyGroup)
         .dimension(agency)
+		.labelOffsetX(0)
+		.labelOffsetY(12)
 		.data(function(agencyGroup){return agencyGroup.top(10)})
 		.ordering(function(d){ return -d.value })
         .ordinalColors(["#55649B"])
         .label(function (d) {
-            return d.key+": "+ d.value + " incidents";
+            return d.key+": "+ d.value;
         })
         // title sets the row text
         .title(function (d) {
@@ -203,11 +213,13 @@ function ready(error, data, geodata){
         .elasticX(true)
         .xAxis().ticks(4);
 		
-	complaintChart.width(300)
+	complaintChart.width(380)
         .height(bottomRowHeight)
-        .margins({top: 0, left: 5, right: 10, bottom: 0})
+        .margins({top: 0, left: 50, right: 10, bottom: 0})
         .group(complaintGroup)
         .dimension(complaint)
+		.labelOffsetX(-40)
+		.labelOffsetY(12)		
 		.data(function(complaintGroup){return complaintGroup.top(10)})
 		.ordering(function(d){ return -d.value })
         .ordinalColors(["#55649B"])
@@ -227,7 +239,7 @@ function ready(error, data, geodata){
         // %filter-count and %total-count are replaced with the values obtained.
         .html({
             some:"<strong>%filter-count</strong> selected out of <strong>%total-count</strong> records | <a href='javascript:dc.filterAll(); dc.renderAll();''>Reset All</a>",
-            all:"All  <strong>%total-count</strong> records selected. Please click on the graph to apply filters."
+            all:"All  <strong>%total-count</strong> records selected. Click on any graph."
         })
     /*
     //#### Data Table
@@ -290,7 +302,7 @@ function ready(error, data, geodata){
 */
 	//nycMap
 	//var colorScale = d3.scale.linear().domain([0,10000]).range(["#eee", "#dc3a23"])
-
+	var maxZipcode = zipcodeGroup.top(1)[0].value
 	var projection = d3.geo.mercator()
 					.center([-74.25,40.915])
 					.translate([0, 0])
@@ -303,8 +315,9 @@ function ready(error, data, geodata){
         .dimension(zipcode) // set crossfilter dimension, dimension key should match the name retrieved in geo json layer
         .group(zipcodeGroup) // set crossfilter group
         //.colors(function(d, i){return  colorScale(d.value);})
-		.colors(d3.scale.linear().domain([0,11000]).range(["#ffffff", "#dc3a23"]))
-		//.colors(d3.scale.linear().domain([0,100]).range(["#fff", "#dc3a23"]))
+		.colorAccessor(function(d){return d.value})
+		.calculateColorDomain()
+		.colors(d3.scale.linear().range(["#ffffff", "#dc3a23"]))
 		.overlayGeoJson(geodata.features, "zipcode", function(d) {
             return d.properties.postalCode;
         })
