@@ -7,7 +7,7 @@
 //var fluctuationChart = dc.barChart("#fluctuation-chart");
 var complaintChart = dc.rowChart("#complaint-chart");
 
-var boroughChart = dc.pieChart("#borough-chart");
+var boroughChart = dc.rowChart("#borough-chart");
 var dayOfWeekChart = dc.rowChart("#day-of-week-chart");
 var agencyChart = dc.rowChart("#agency-chart");
 var hourChart = dc.barChart("#hour-chart");
@@ -26,10 +26,17 @@ function toTitleCase(str)
 
 
 queue()
-//.defer(d3.csv, "nyc_2013_ALL.csv")
-.defer(d3.csv, "nyc_smallSample.csv")
+.defer(d3.csv, "nyc_2013_ALL.csv")
+//.defer(d3.csv, "nyc_smallSample.csv")
 .defer(d3.json, "nyc-zip-codes.geojson")
 .await(ready);
+
+//filters for text
+var nypd = "NYPD"
+var weekend = 1
+var weekday = ["0.Sun","6.Sat"]
+var noise = "Loud Music/Party"
+
 
 function ready(error, data, geodata){
 	//format dates
@@ -154,34 +161,41 @@ function ready(error, data, geodata){
 		var allValue = data.length
 		//console.log(allvalue)
 		
-    boroughChart.width(300)
-        .height(160)
-        .radius(70)
-		//.filter("BROOKLYN")
-		//.ordinalColors(["#E69326","#EBB743","#E4782E","#E39E58","#B78433"])
+    boroughChart.width(220)
+        .height(140)
+	    .margins({top: 20, left: 90, right: 10, bottom: 20})
 		.ordinalColors(boroughChartColors)
-		.minAngleForLabel([.2])
+		.gap(1)
+		.data(function(zipcodeGroup){return zipcodeGroup.top(5)})
         .dimension(borough)
-		.ordering(function(d){ return d.value})
+		.ordering(function(d){ return -d.value})
         .group(boroughGroup)
+	    .ordinalColors(["#DE3E2A"])
+	    .label(function (d) {
+	        return d.key;
+	    })
+	    .elasticX(true)
+		.labelOffsetX(-90)
+		.labelOffsetY(15)
         .label(function (d) {
 			//return toTitleCase(d.key) + ' ' + Math.round((d.endAngle - d.startAngle) / Math.PI * 50) + '%';
-            return toTitleCase(d.key+ " "+Math.round(d.value/allValue*100)+"%");
+            return toTitleCase(d.key+ "  "+Math.round(d.value/allValue*100)+"%");
         })
+        .xAxis().ticks(2)
 		
 	zipcodeChart.width(200)
 	    .height(200)
-	    .margins({top: 20, left: 50, right: 10, bottom: 20})
+	    .margins({top: 20, left: 40, right: 10, bottom: 20})
 	    .group(zipcodeGroup)
 	    .dimension(zipcode)
 		.gap(1)
 		.data(function(zipcodeGroup){return zipcodeGroup.top(10)})
 		.ordering(function(d){ return -d.value })
-	    .ordinalColors(["#dc3a23"])
+	    .ordinalColors(["#D96947"])
 	    .label(function (d) {
 	        return d.key;
 	    })
-		.labelOffsetX(-40)
+		.labelOffsetX(-35)
 		.labelOffsetY(12)
 		
 	    // title sets the row text
@@ -193,42 +207,46 @@ function ready(error, data, geodata){
 			
 			
 		var bottomRowHeight = 200
-	agencyChart.width(600)
+		
+	agencyChart.width(380)
         .height(bottomRowHeight)
-        .margins({top: 0, left: 0, right: 10, bottom: 0})
+        .margins({top: 0, left: 125, right: 10, bottom: 20})
         .group(agencyGroup)
         .dimension(agency)
-		.labelOffsetX(0)
+		.labelOffsetX(-120)
 		.labelOffsetY(12)
 		.data(function(agencyGroup){return agencyGroup.top(10)})
 		.ordering(function(d){ return -d.value })
-        .ordinalColors(["#55649B"])
+        .ordinalColors(["#5CDD89"])
         .label(function (d) {
-            return d.key+": "+ d.value;
+            return d.key+": "+ d.value+ " Reports";
         })
         // title sets the row text
         .title(function (d) {
             return d.value;
         })
         .elasticX(true)
-        .xAxis().ticks(4);
+        .xAxis().ticks(4)
 		
-	complaintChart.width(380)
+	complaintChart.width(390)
         .height(bottomRowHeight)
-        .margins({top: 0, left: 50, right: 10, bottom: 0})
+        .margins({top: 0, left: 180, right: 10, bottom: 20})
         .group(complaintGroup)
         .dimension(complaint)
-		.labelOffsetX(-40)
+		.labelOffsetX(-175)
 		.labelOffsetY(12)		
 		.data(function(complaintGroup){return complaintGroup.top(10)})
 		.ordering(function(d){ return -d.value })
-        .ordinalColors(["#55649B"])
-        .label(function (d){
-            return d.key+": "+ d.value + " incidents";
+        .ordinalColors(["#63D965"])
+		.title("test")
+		.label(function (d){
+			var keyString = d.key.split(" ")
+			return d.key
+            return keyString[0]+" "+keyString[1]+": "+ d.value + " Reports";
         })
         .elasticX(true)
-        .xAxis().ticks(4);
-		
+        .xAxis().ticks(4)
+		//.on("mouseover", function(d){console.log("test")})
 	
 			
     dc.dataCount(".dc-data-count")
@@ -238,8 +256,8 @@ function ready(error, data, geodata){
         // .html replaces everything in the anchor with the html given using the following function.
         // %filter-count and %total-count are replaced with the values obtained.
         .html({
-            some:"<strong>%filter-count</strong> selected out of <strong>%total-count</strong> records | <a href='javascript:dc.filterAll(); dc.renderAll();''>Reset All</a>",
-            all:"All  <strong>%total-count</strong> records selected. Click on any graph."
+            some:"%filter-count selected out of <strong>%total-count</strong> records | <a href='javascript:dc.filterAll(); dc.renderAll();''>Reset All</a>",
+            all:"All  %total-count records selected."
         })
     /*
     //#### Data Table
@@ -315,16 +333,15 @@ function ready(error, data, geodata){
         .dimension(zipcode) // set crossfilter dimension, dimension key should match the name retrieved in geo json layer
         .group(zipcodeGroup) // set crossfilter group
         //.colors(function(d, i){return  colorScale(d.value);})
-		.colorAccessor(function(d){return d.value})
-		.calculateColorDomain()
-		.colors(d3.scale.linear().range(["#ffffff", "#dc3a23"]))
+		//.colorAccessor(function(d){return d.value})
+		.colors(d3.scale.sqrt().domain([0,maxZipcode*.9]).range(["#ffffff", "#dc3a23"]))
 		.overlayGeoJson(geodata.features, "zipcode", function(d) {
             return d.properties.postalCode;
         })
-		.legend(dc.legend().x(170).y(0).gap(5));
-
+		//.on('mouseover', tip.show)
+		.legend(dc.legend().x(400).y(10).itemHeight(13).gap(5))
     dc.renderAll();
-
+	d3.select("#loader").remove();
 };
 
 //#### Version

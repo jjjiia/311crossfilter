@@ -33,6 +33,17 @@
 </head>
 
 <body>
+	<div id = "loader">
+		<div id = "loader-text">
+		
+		311 is the city's way of providing non-emergency services to its residents. Requests can vary from the infrastructural (road repair, traffic lights, electrical outages) to isolated incidents (heating, lead testing, graffiti removal and noise complaints), as long as they directly affect the everyday lives of citizens.<br/><br/>
+		This map visualizes the day of week, time of day, temperature condition, government agency, and location of 834,801 service requests made to NYC 311 in the year 2013.
+		<br/><br/>
+		
+		Please wait while records load for New York City ... 
+	</div>
+		</div>
+
 	<div id = "header">
 		<div class= "logo"><a id="logo" href="http://youarehere.cc"><img src="images/logo.png" style="width: 80px"></a></div>
 		<div class = "title">New York City</div><br/>
@@ -44,17 +55,25 @@
         </div>
     </div>
 	<br/>
-<a href="#" id="example-show" class="showLink" onclick="showHide('example');return false;">... more</a></p>
+	<a href="#" id="example-show" class="showLink" onclick="showHide('example');return false;">... more</a></p>
      <div id="example" class="more">
-	<p>
-		This map visualizes the day of week, time of day, temperature condition, government agency, and location of ######## service requests made to NYC 311 in the year 2013.
-	</p>
+		 <p>
+			 This map visualizes the day of week, time of day, temperature condition, government agency, and location of 834,801 service requests made to NYC 311 in the year 2013.
+		</p>
 	 	<p>
-	 		311 is the city's way of providing non-emergency services to its residents. 
-	 	Requests can vary from the infrastructural (road repair, traffic lights, electrical outages) to isolated incidents (heating, lead testing, graffiti removal and noise complaints), as long as they directly affect the everyday lives of citizens.
+        Where and when does the <a href="javascript:agencyChart.filter(nypd); dc.redrawAll();">NYPD</a> work?<br/>
+		Where are  <a href="javascript:complaintChart.filter(noise); dc.redrawAll();">music and party noise complaints</a> concentrated?<br/>
+		
+		How are <a href="javascript:dayOfWeekChart.filter(weekday); dc.redrawAll();">weekdays </a>and 
+		<a href="javascript:dayOfWeekChart.filter(weekend); dc.redrawAll();"> weekends</a><br/>different?
+		
 	</p>
         <p>
-What part of the city government is at the end of our requests, which neighborhoods do they do the most work in? How are weekdays and weekends different? What time of day gets the most Department of Transportation requests?</p>
+			What part of the city government is at the end of our requests, which neighborhoods do they do the most work in?  What time of day gets the most Department of Transportation requests?</p>
+	 	<p>
+	 		See the data
+		</p>
+
         <p><a href="#" id="example-hide" class="hideLink" onclick="showHide('example');return false;">... less</a></p>
      </div>
 
@@ -68,21 +87,21 @@ What part of the city government is at the end of our requests, which neighborho
 <div class="row">
 	<div class = "chartGroupTitle">Day, Time, and Temperature</div>
     <div id="day-of-week-chart">
-        <div class = "chart-title">Day of Week</div>
+        Day of Week
         <a class="reset" href="javascript:dayOfWeekChart.filterAll();dc.redrawAll();" 			style="display: none;">reset</a>
         <div class="clearfix"></div>
     </div>
 	
     <div id="hour-chart">
-        <div class = "chart-title">Time of Day</div>
-        <span class="reset" style="display: none;">range: <span class="filter"></span></span>
+        Time of Day
+        <span class="reset" style="display: none;"><span class="filter"></span> hour</span>
         <a class="reset" href="javascript:hourChart.filterAll();dc.redrawAll();" 		style="display: none;">reset</a>
         <div class="clearfix"></div>
     </div>
 	
     <div id="temperature-chart">
-        <div class = "chart-title">Daily High Temperature</div>
-        <span class="reset" style="display: none;">range: <span class="filter"></span></span>
+        Daily High Temperature
+        <span class="reset" style="display: none;">: <span class="filter"> </span></span>
         <a class="reset" href="javascript:tempChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
         <div class="clearfix"></div>
     </div>
@@ -95,20 +114,20 @@ What part of the city government is at the end of our requests, which neighborho
 <div class="row">	
 	<div class = "chartGroupTitle">Zipcodes and Jurisdictions</div>
 	    <div id="nyc-chart">
-	        <div class = "chart-title">New York City Zipcode Map</div>
+	        New York City Zipcode Map
 	        <span class="reset" style="display: none;">: <span class="filter"></span></span>
-	        <a class="reset" href="javascript:nycMap.filterAll();dc.redrawAll();" 		style="display: none;">reset</a>
+	        <a class="reset" href="javascript:nycMap.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 	        <div class="clearfix"></div>
 	    </div>
 		
 	    <div id="borough-chart">
-	       <div class = "chart-title">Boroughs</div>
+	       Boroughs
 	        <span class="reset" style="display: none;">: <span class="filter"></span></span>
 	        <a class="reset" href="javascript:boroughChart.filterAll();dc.redrawAll();" 		style="display: none;">reset</a>
 	        <div class="clearfix"></div>
 		</div>
 	    <div id="zipcode-chart">
-	      <div class = "chart-title">Top 10 Zipcodes</div>
+	      Top 10 Zipcodes
 	        <span class="reset" style="display: none;">: <span class="filter"></span></span>
 	        <a class="reset" href="javascript:zipcodeChart.filterAll();dc.redrawAll();" 		style="display: none;">reset</a>
 	        <div class="clearfix"></div>
@@ -119,13 +138,13 @@ What part of the city government is at the end of our requests, which neighborho
 	<div class = "chartGroupTitle">Agencies and Complaints</div>
 
     <div id="agency-chart">
-        <div class = "chart-title">Top 10 Agencies</div>
+        Top 10 Agencies
         <span class="reset" style="display: none;">: <span class="filter"></span></span>
         <a class="reset" href="javascript:agencyChart.filterAll();dc.redrawAll();" 		style="display: none;">reset</a>
         <div class="clearfix"></div>
 	</div>	  
     <div id="complaint-chart">
-        <div class = "chart-title">Top 10 Complaints</div>
+        Top 10 Complaints
         <span class="reset" style="display: none;">: <span class="filter"></span></span>
         <a class="reset" href="javascript:complaintChart.filterAll();dc.redrawAll();"		style="display: none;">reset</a>
         <div class="clearfix"></div>

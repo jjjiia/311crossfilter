@@ -72,7 +72,8 @@ div.dc-chart {
 }
 
 .dc-chart .axis text {
-    font: 10px sans-serif;
+    font: 10px serif;
+	fill:#aaa;
 }
 
 .dc-chart .grid-line {
@@ -114,7 +115,7 @@ div.dc-chart {
 
 .dc-chart g.dc-tooltip path {
     fill: none;
-    stroke: grey;
+    stroke: #fff;
     stroke-opacity: .8;
 }
 
@@ -153,6 +154,8 @@ div.dc-chart {
     float: right;
     margin-top: 15px;
     margin-right: 15px;
+	font-weight:normal;
+	
 }
 
 .dc-data-count .filter-count {
@@ -160,7 +163,8 @@ div.dc-chart {
 }
 
 .dc-data-count .total-count {
-    color: #aaa;	
+    color: #aaa;
+	font-weight:normal;
 }
 
 .dc-data-table {
@@ -212,7 +216,7 @@ div.dc-chart {
 }
 
 .dc-chart g.row text {
-    fill: black;
+    fill: #aaa;
     font-size: 12px;
     cursor: pointer;
 }
