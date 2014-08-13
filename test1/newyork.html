@@ -47,31 +47,28 @@
 	<div id = "header">
 		<div class= "logo"><a id="logo" href="http://youarehere.cc"><img src="images/logo.png" style="width: 80px"></a></div>
 		<div class = "title">New York City</div><br/>
-		<div class = "subtitle">This map visualizes how New York City used 311 Services over the course of 1 year</div>
+		<div class = "subtitle"> This map visualizes the day of week, time of day, temperature condition, government agency, and location of 834,801 service requests made to NYC 311 in the year 2013.</div>
     <div>
-        <div class="dc-data-count">
-            <span class="filter-count"></span> selected out of <span class="total-count"></span> records | <a
-                href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a>
-        </div>
     </div>
 	<br/>
 	<a href="#" id="example-show" class="showLink" onclick="showHide('example');return false;">... more</a></p>
      <div id="example" class="more">
 		 <p>
-			 This map visualizes the day of week, time of day, temperature condition, government agency, and location of 834,801 service requests made to NYC 311 in the year 2013.
 		</p>
-	 	<p>
-        Where and when does the <a href="javascript:agencyChart.filter(nypd); dc.redrawAll();">NYPD</a> work?<br/>
-		Where are  <a href="javascript:complaintChart.filter(noise); dc.redrawAll();">music and party noise complaints</a> concentrated?<br/>
 		
-		How are <a href="javascript:dayOfWeekChart.filter(weekday); dc.redrawAll();">weekdays </a>and 
-		<a href="javascript:dayOfWeekChart.filter(weekend); dc.redrawAll();"> weekends</a><br/>different?
-		
+		<p>
+		311 is the city's way of providing non-emergency services to its residents. It is also a way through which we can understand the lives of residents through their needs. How the service is used reflects the rhythm of the city itself.
 	</p>
-        <p>
-			What part of the city government is at the end of our requests, which neighborhoods do they do the most work in?  What time of day gets the most Department of Transportation requests?</p>
+	
 	 	<p>
-	 		See the data
+        While agencies such as the <a href="javascript:agencyChart.filter(nypd); dc.redrawAll();">NYPD</a> responds to incidents across all zipcodes, 
+		the <a href="javascript:dc.filterAll();agencyChart.filter(tlc); dc.redrawAll();">Taxi and Limosine Commision</a>  is more concentrated in lower Manhattan and the area of Brooklyn adjacent to it.
+		<br/>
+		Blocked access and street lights dominate the complaints during the week. However complaints about <a href="javascript:dc.filterAll(); complaintChart.filter(noise); dc.redrawAll();">music and party noise take over the weekends.</a>
+		</p>
+
+	 	<p>
+	 		Link to data
 		</p>
 
         <p><a href="#" id="example-hide" class="hideLink" onclick="showHide('example');return false;">... less</a></p>
@@ -83,7 +80,13 @@
 
 
 <div id="container">
-
+	<div class="row">
+        <div class="dc-data-count">
+            <span class="filter-count"></span> selected out of <span class="total-count"></span> records | <a
+                href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a>
+        </div>
+        </div>
+		
 <div class="row">
 	<div class = "chartGroupTitle">Day, Time, and Temperature</div>
     <div id="day-of-week-chart">

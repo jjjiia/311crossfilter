@@ -33,10 +33,9 @@ queue()
 
 //filters for text
 var nypd = "NYPD"
-var weekend = 1
-var weekday = ["0.Sun","6.Sat"]
+var weekend = ["0.Sun","6.Sat"]
 var noise = "Loud Music/Party"
-
+var tlc = "TLC"
 
 function ready(error, data, geodata){
 	//format dates
@@ -241,7 +240,7 @@ function ready(error, data, geodata){
 		.title("test")
 		.label(function (d){
 			var keyString = d.key.split(" ")
-			return d.key
+			//return d.key
             return keyString[0]+" "+keyString[1]+": "+ d.value + " Reports";
         })
         .elasticX(true)
@@ -334,7 +333,7 @@ function ready(error, data, geodata){
         .group(zipcodeGroup) // set crossfilter group
         //.colors(function(d, i){return  colorScale(d.value);})
 		//.colorAccessor(function(d){return d.value})
-		.colors(d3.scale.sqrt().domain([0,maxZipcode*.9]).range(["#ffffff", "#dc3a23"]))
+		.colors(d3.scale.sqrt().domain([0,maxZipcode*.8]).range(["#ffffff", "#dc3a23"]))
 		.overlayGeoJson(geodata.features, "zipcode", function(d) {
             return d.properties.postalCode;
         })
